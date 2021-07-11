@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: occ-{{ .Release.Name }}
+  labels:
+    app: occ-{{ .Release.Name }}
+  namespace: default  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: occ-{{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: occ-{{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}
+        image: occ:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - name: {{ .Release.Name }}
+            mountPath: /usr/share/nginx/html/index.html
+            subPath: index.html
+      volumes:
+        - name: {{ .Release.Name }}
+          configMap:
+            name: {{ .Release.Name }}
